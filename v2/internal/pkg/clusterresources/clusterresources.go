@@ -193,7 +193,6 @@ func (o *ClusterResourcesGenerator) getCSTemplate(catalogRef string) string {
 }
 
 func (o *ClusterResourcesGenerator) generateCatalogSource(catalogRef string, catalogSourceTemplateFile string) error {
-
 	catalogSpec, err := image.ParseRef(catalogRef)
 	if err != nil {
 		return err
@@ -221,7 +220,8 @@ func (o *ClusterResourcesGenerator) generateCatalogSource(catalogRef string, cat
 
 	pathComponents := strings.Split(catalogSpec.PathComponent, "/")
 	catalogRepository := pathComponents[len(pathComponents)-1]
-	catalogSourceName := "cs-" + catalogRepository + "-" + csSuffix
+	catalogSourceName := catalogRepository + "-" + csSuffix  // Modified line to remove 'cs-' prefix
+
 	errs := validation.IsDNS1035Label(catalogSourceName)
 	if len(errs) != 0 && !isValidRFC1123(catalogSourceName) {
 		return fmt.Errorf("error creating catalog source name: %s", strings.Join(errs, ", "))
@@ -288,6 +288,7 @@ func (o *ClusterResourcesGenerator) generateCatalogSource(catalogRef string, cat
 
 	return err
 }
+
 
 func catalogSourceContentFromTemplate(templateFile, catalogSourceName, image string) (ofv1alpha1.CatalogSource, error) {
 	// Initializing catalogSource `obj` from template
